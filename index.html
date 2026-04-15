@@ -1,0 +1,610 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion Église AD</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { background: #f97316; color: #1e293b; }
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+.login-box { background: #fff; padding: 40px; border-radius: 12px; max-width: 400px; margin: 80px auto; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); color: #1e293b; }
+.logo-ad { width: 80px; height: 80px; margin: 0 auto 20px; }
+.login-box h2 { color: #1e40af; font-size: 28px; margin-bottom: 5px; }
+.login-box .version { color: #f43f5e; font-size: 16px; margin-bottom: 30px; }
+.input-group { position: relative; margin: 20px 0; }
+.input-group input { width: 100%; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; color: #1e293b; font-size: 16px; padding-right: 45px; }
+.eye-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 20px; user-select: none; }
+.checkbox-group { display: flex; align-items: center; gap: 8px; margin: 10px 0; font-size: 14px; }
+.checkbox-group input[type="checkbox"] { width: auto; margin: 0; }
+.btn-entrer { width: 100%; padding: 15px; border-radius: 8px; border: none; background: #3b82f6; color: #fff; font-size: 18px; font-weight: bold; cursor: pointer; }
+.setup-box { background: #fff; padding: 40px; border-radius: 12px; max-width: 400px; margin: 100px auto; text-align: center; color: #1e293b; }
+
+    #app { background: #f97316; min-height: 100vh; }
+    input, textarea, button, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #1e293b; font-size: 16px; }
+    button { background: #3b82f6; border: none; cursor: pointer; font-weight: bold; color: #fff; }
+    button.danger { background: #ef4444; }
+    button.secondary { background: #64748b; }
+    button.warning { background: #f59e0b; }
+.hidden { display: none; }
+
+.header-app { background: #fff; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+.header-app h1 { color: #1e40af; font-size: 20px; }
+.signature-hab { font-size: 12px; color: #f59e0b; font-weight: bold; margin-left: 5px; }
+.stats-top { display: flex; gap: 20px; }
+.stat-top { text-align: center; }
+.stat-top-number { font-size: 20px; font-weight: bold; color: #f97316; }
+.stat-top-label { font-size: 11px; color: #64748b; }
+
+.dossiers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+.dossier-card { background: #fff; border-radius: 12px; padding: 30px 15px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.dossier-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+
+.dossier-card:nth-child(1) { color: #1e40af; }
+.dossier-card:nth-child(2) { color: #8b5cf6; }
+.dossier-card:nth-child(3) { color: #10b981; }
+.dossier-card:nth-child(4) { color: #f59e0b; }
+.dossier-card:nth-child(5) { color: #3b82f6; }
+.dossier-card:nth-child(6) { color: #ec4899; }
+.dossier-card:nth-child(7) { color: #06b6d4; }
+.dossier-card:nth-child(8) { color: #6b7280; }
+.dossier-card:nth-child(9) { color: #22c55e; }
+.dossier-card:nth-child(10) { color: #ef4444; }
+
+.icon-emoji { font-size: 35px; margin-bottom: 10px; }
+.icon-nom { font-size: 15px; font-weight: 600; }
+
+.page-dossier { background: #fff; border-radius: 12px; padding: 20px; color: #1e293b; }
+.top-bar-dossier { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #f1f5f9; gap: 15px; }
+.top-bar-dossier h2 { flex: 1; text-align: center; margin: 0 10px; }
+.rapport-box { background: #f8fafc; padding: 15px; margin: 15px 0; border-radius: 8px; min-height: 100px; white-space: pre-wrap; border: 1px solid #e2e8f0; }
+.liste-personnes { background: #f8fafc; padding: 15px; border-radius: 8px; margin: 15px 0; }
+.personne-item { background: #fff; padding: 12px; margin: 8px 0; border-radius: 6px; border-left: 3px solid #3b82f6; display: flex; gap: 15px; align-items: start; }
+.personne-photo { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #3b82f6; }
+.personne-info { flex: 1; }
+.personne-info strong { color: #1e40af; }
+.personne-details { font-size: 13px; color: #64748b; margin-top: 5px; line-height: 1.6; }
+.badge-admin { background: #f59e0b; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 8px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form-section { background: #f8fafc; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #3b82f6; }
+.form-section h4 { color: #1e40af; margin-bottom: 10px; }
+.photo-upload { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.photo-preview { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #cbd5e1; }
+.footer-hab { background: rgba(255,255,255,0.9); text-align: center; padding: 10px; margin-top: 30px; border-radius: 8px; font-size: 12px; color: #64748b; }
+.footer-hab strong { color: #f59e0b; }
+  </style>
+</head>
+<body>
+  <div id="login" class="login-box">
+    <svg class="logo-ad" viewBox="0 0 100 100">
+      <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="none" stroke="#1e40af" stroke-width="3"/>
+      <text x="50" y="60" font-size="40" font-weight="bold" fill="#1e40af" text-anchor="middle">AD</text>
+    </svg>
+    <h2>Assemblées de Dieu</h2>
+    <div class="version">Gestion Église V1.8</div>
+    <div class="input-group">
+      <input type="password" id="codeInput" placeholder="Code d'accès" value="1234" maxlength="4">
+      <span class="eye-icon" onclick="toggleMdp('codeInput')">👁️</span>
+    </div>
+    <button class="btn-entrer" onclick="verifierCode()">Entrer</button>
+    <p id="loginError" style="color:#ef4444;margin-top:10px;"></p>
+  </div>
+
+  <div id="setup" class="setup-box hidden">
+    <h2>⛪ Bienvenue</h2>
+    <p>Nom de votre église :</p>
+    <input type="text" id="nomEgliseInput" placeholder="Ex: Église AD Abidjan">
+    <button class="btn-entrer" onclick="sauverNomEglise()">Continuer</button>
+  </div>
+
+  <div id="app" class="container hidden">
+    <div class="header-app">
+      <div>
+        <h1 id="titreEglise">Bienvenue<span class="signature-hab">by H@B</span></h1>
+        <div style="font-size:14px;color:#64748b;">Gestion Église AD</div>
+      </div>
+      <div class="stats-top">
+        <div class="stat-top"><div class="stat-top-number" id="countPasteurs">0</div><div class="stat-top-label">Pasteurs</div></div>
+        <div class="stat-top"><div class="stat-top-number" id="countAnciens">0</div><div class="stat-top-label">Anciens</div></div>
+        <div class="stat-top"><div class="stat-top-number" id="countDiacres">0</div><div class="stat-top-label">Diacres</div></div>
+        <div class="stat-top"><div class="stat-top-number" id="countRespDept">0</div><div class="stat-top-label">Resp. Dépt.</div></div>
+        <div class="stat-top"><div class="stat-top-number" id="countMembres">0</div><div class="stat-top-label">Membres</div></div>
+      </div>
+      <button class="warning" onclick="reinitialiserEglise()" style="width:auto;padding:8px 12px;">🔄 Changer église</button>
+    </div>
+
+    <div id="vueIcones">
+      <div class="dossiers-grid" id="listeDossiers"></div>
+    </div>
+
+    <div id="vueDossierOuvert" class="hidden">
+      <div class="page-dossier">
+        <div class="top-bar-dossier">
+          <button class="secondary" onclick="retourIcones()">← Retour</button>
+          <h2 id="nomDossierOuvert"></h2>
+          <div style="font-size:12px;color:#22c55e;">● Synchro temps réel</div>
+        </div>
+<div id="sectionAjout" class="hidden">
+          <h3>➕ Ajouter une personne</h3>
+
+          <div class="photo-upload">
+            <img id="photoPreview" class="photo-preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Crect fill='%23e2e8f0' width='50' height='50' rx='25'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%2364748b' font-size='20'%3E📷%3C/text%3E%3C/svg%3E">
+            <input type="file" id="photoInput" accept="image/*" onchange="previewPhoto(event)">
+          </div>
+
+          <div class="form-row">
+            <input type="text" id="nomPersonne" placeholder="Nom">
+            <input type="text" id="prenomPersonne" placeholder="Prénom">
+          </div>
+          <div class="form-row">
+            <input type="tel" id="telPersonne" placeholder="Téléphone">
+            <input type="date" id="dateNaissance" placeholder="Date de naissance">
+          </div>
+
+          <div id="champsEcole" class="form-section hidden">
+            <select id="typePersonneEcole" onchange="toggleChampsEcole()">
+              <option value="">Choisir le type</option>
+              <option value="Moniteur">Moniteur</option>
+              <option value="Monitrice">Monitrice</option>
+              <option value="Ado">Ado</option>
+              <option value="Preado">Préado</option>
+              <option value="Junior">Junior</option>
+              <option value="Enfant">Enfant</option>
+            </select>
+            <input type="text" id="grade" placeholder="Grade/Classe" class="hidden">
+            <input type="text" id="numeroParents" placeholder="Numéro des parents" class="hidden">
+            <input type="text" id="anneesExperienceMoniteur" placeholder="Années d'expérience comme moniteur" class="hidden">
+          </div><div id="champsMusique" class="form-section hidden">
+            <select id="typePersonneMusique" onchange="toggleChampsMusique()">
+              <option value="">Choisir le type</option>
+              <option value="Chorale">Chorale</option>
+              <option value="Chantre">Chantre</option>
+              <option value="Musicien">Musicien</option>
+            </select>
+            <input type="text" id="instrument" placeholder="Instrument joué" class="hidden">
+            <input type="text" id="anneesExperienceMusique" placeholder="Années d'expérience" class="hidden">
+          </div>
+
+          <div id="champsBapteme" class="hidden">
+            <div class="form-row">
+              <select id="baptemeEau">
+                <option value="">Baptisé d'eau?</option>
+                <option value="Oui">Oui</option>
+                <option value="Non">Non</option>
+              </select>
+              <input type="text" id="anneeBaptemeEau" placeholder="Année baptême d'eau">
+            </div>
+            <div class="form-row">
+              <select id="baptemeEsprit">
+                <option value="">Baptisé Saint-Esprit?</option>
+                <option value="Oui">Oui</option>
+                <option value="Non">Non</option>
+              </select>
+              <input type="text" id="anneeBaptemeEsprit" placeholder="Année baptême Saint-Esprit">
+            </div>
+          </div>
+
+          <div id="champsPasteur" class="hidden">
+            <input type="text" id="diplome" placeholder="Diplôme Théologique">
+            <input type="text" id="experience" placeholder="Années d'expérience">
+            <input type="text" id="nomBaptiseur" placeholder="Nom du baptiseur d'eau">
+          </div>
+
+          <button onclick="ajouterPersonneDossier()">Ajouter</button>
+        </div>
+
+        <div id="sectionListe" class="hidden">
+          <h3>👥 Liste</h3>
+          <div id="listePersonnesDossier" class="liste-personnes"></div>
+        </div>
+
+        <h3>📝 Rapport du dossier</h3>
+        <div id="rapportDossier" class="rapport-box">Chargement...</div>
+        <textarea id="nouveauRapport" placeholder="Écrire ou modifier le rapport..." rows="4"></textarea>
+        <button onclick="sauverRapport()">Sauver et Synchroniser</button>
+        <button id="btnChangerMdp" onclick="changerMdpDossier()">Changer le mot de passe <span class="badge-admin">Admin seul</span></button>
+      </div>
+    </div>
+
+    <div class="footer-hab">
+      Développé par <strong>H@B</strong> | Gestion Église AD V1.8
+    </div>
+
+    <div id="modalDossier" class="login-box hidden" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:100;">
+      <h3 id="titreDossierModal"></h3>
+      <div class="input-group">
+        <input type="password" id="mdpDossierInput" placeholder="Mot de passe du dossier">
+        <span class="eye-icon" onclick="toggleMdp('mdpDossierInput')">👁️</span>
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="memoriserMdp">
+        <label for="memoriserMdp">Mémoriser ce mot de passe</label>
+      </div>
+      <button class="btn-entrer" onclick="ouvrirDossier()">Ouvrir</button>
+      <button class="danger" onclick="fermerModal()">Annuler</button>
+      <p id="dossierError" style="color:#ef4444;"></p>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      databaseURL: "https://gestion-ad-eglise-default-rtdb.europe-west1.firebasedatabase.app"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const CODE_APP = "1234";
+    const CODE_ADMIN = "1234";
+
+ const DOSSIERS = [
+  {id: "pasteurs", nom: "Pasteurs", icon: "🧑‍⚖️", avecMdp: true, avecAjout: true, estPasteur: true},
+  {id: "anciens", nom: "Anciens", icon: "👴", avecMdp: true, avecAjout: true},
+  {id: "diacres", nom: "Diacres/Diaconesses", icon: "👨‍💼", avecMdp: true, avecAjout: true},
+  {id: "resp_dept", nom: "Resp. Départementaux", icon: "📋", avecMdp: true, avecAjout: true},
+  {id: "membres", nom: "Membres de l'église", icon: "👥", avecMdp: false, avecAjout: true},
+  {id: "ecole_dimanche", nom: "École de Dimanche", icon: "📚", avecMdp: true, avecAjout: true, estEcole: true},
+  {id: "ensemble_musical", nom: "Ensemble Musical", icon: "🎵", avecMdp: true, avecAjout: true, estMusique: true},
+  {id: "parametres", nom: "Paramètres", icon: "⚙️", avecMdp: true, avecAjout: false},
+  {id: "finance", nom: "Finance", icon: "💰", avecMdp: true, avecAjout: false},
+  {id: "deconnexion", nom: "Déconnexion", icon: "🚪", avecMdp: false, avecAjout: false}
+];
+    let dossierActuel = null;
+    let photoBase64 = null;
+
+    function toggleMdp(inputId) {
+      const input = document.getElementById(inputId);
+      input.type = input.type === 'password'? 'text' : 'password';
+    }
+
+    function previewPhoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          photoBase64 = e.target.result;
+          document.getElementById('photoPreview').src = photoBase64;
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function toggleChampsEcole() {
+      const type = document.getElementById('typePersonneEcole').value;
+      const grade = document.getElementById('grade');
+      const numeroParents = document.getElementById('numeroParents');
+      const anneesExp = document.getElementById('anneesExperienceMoniteur');
+      const champsBapteme = document.getElementById('champsBapteme');
+
+      if (type === 'Moniteur' || type === 'Monitrice') {
+        grade.classList.remove('hidden');
+        anneesExp.classList.remove('hidden');
+        champsBapteme.classList.remove('hidden');
+        numeroParents.classList.add('hidden');
+      } else if (type === 'Ado' || type === 'Preado' || type === 'Junior' || type === 'Enfant') {
+        numeroParents.classList.remove('hidden');
+        grade.classList.add('hidden');
+        anneesExp.classList.add('hidden');
+        champsBapteme.classList.add('hidden');
+      } else {
+        grade.classList.add('hidden');
+        numeroParents.classList.add('hidden');
+        anneesExp.classList.add('hidden');
+        champsBapteme.classList.add('hidden');
+      }
+    }
+       function toggleChampsMusique() {
+       const type = document.getElementById('typePersonneMusique').value;
+       const instrument = document.getElementById('instrument');
+       const anneesExp = document.getElementById('anneesExperienceMusique');
+       const champsBapteme = document.getElementById('champsBapteme');
+
+      if (type === 'Musicien') {
+        instrument.classList.remove('hidden');
+        anneesExp.classList.remove('hidden');
+        champsBapteme.classList.remove('hidden');
+      } else if (type === 'Chorale' || type === 'Chantre') {
+        instrument.classList.add('hidden');
+        anneesExp.classList.remove('hidden');
+        champsBapteme.classList.remove('hidden');
+      } else {
+        instrument.classList.add('hidden');
+        anneesExp.classList.add('hidden');
+        if (!document.getElementById('champsEcole').classList.contains('hidden')) {
+          champsBapteme.classList.add('hidden');
+        }
+      }
+    }
+    function getMdpMemorise(dossierId) {
+      return localStorage.getItem('mdp_' + dossierId);
+    }
+function getMdpMemorise(dossierId) {
+      return localStorage.getItem('mdp_' + dossierId);
+    }
+
+    function setMdpMemorise(dossierId, mdp) {
+      if (document.getElementById('memoriserMdp').checked) {
+        localStorage.setItem('mdp_' + dossierId, mdp);
+      }
+    }
+
+    function lancerApp(nomEglise) {
+      document.getElementById('app').classList.remove('hidden');
+      document.getElementById('titreEglise').innerHTML = nomEglise + '<span class="signature-hab">by H@B</span>';
+      afficherIcones();
+      initDossiersParDefaut();
+      initStatsSync();
+    }
+
+    function initDossiersParDefaut() {
+      DOSSIERS.forEach(d => {
+        if (d.id === "deconnexion") return;
+        db.ref('dossiers/' + d.id).once('value', snap => {
+          if (!snap.exists()) {
+            db.ref('dossiers/' + d.id).set({
+              mdp: "1234", rapport: "", personnes: {}, dateCreation: Date.now(), icon: d.icon, nomAffichage: d.nom
+            });
+          }
+        });
+      });
+    }
+
+    function initStatsSync() {
+      db.ref('dossiers').on('value', snap => {
+        let counts = { pasteurs: 0, anciens: 0, diacres: 0, resp_dept: 0, membres: 0 };
+        snap.forEach(child => {
+          const data = child.val();
+          const id = child.key;
+          const nbPersonnes = data.personnes? Object.keys(data.personnes).length : 0;
+          if (counts[id]!== undefined) counts[id] = nbPersonnes;
+        });
+        document.getElementById('countPasteurs').innerText = counts.pasteurs;
+        document.getElementById('countAnciens').innerText = counts.anciens;
+        document.getElementById('countDiacres').innerText = counts.diacres;
+        document.getElementById('countRespDept').innerText = counts.resp_dept;
+        document.getElementById('countMembres').innerText = counts.membres;
+      });
+    }
+
+    function verifierCode() {
+      const code = document.getElementById('codeInput').value;
+      if (code === CODE_APP) {
+        document.getElementById('login').classList.add('hidden');
+        db.ref('config/nomEglise').once('value', snap => {
+          if (snap.exists()) {
+            lancerApp(snap.val());
+          } else {
+            document.getElementById('setup').classList.remove('hidden');
+          }
+        });
+      } else {
+        document.getElementById('loginError').innerText = "Code incorrect";
+      }
+    }
+
+    function sauverNomEglise() {
+      const nom = document.getElementById('nomEgliseInput').value.trim();
+      if (!nom) return alert("Entrez le nom de l'église");
+      db.ref('config/nomEglise').set(nom);
+      document.getElementById('setup').classList.add('hidden');
+      lancerApp(nom);
+    }
+
+    function reinitialiserEglise() {
+      if (confirm("Voulez-vous changer le nom de l'église? Cela va vous déconnecter.")) {
+        db.ref('config/nomEglise').remove();
+        location.reload();
+      }
+    }
+
+    function afficherIcones() {
+      const div = document.getElementById('listeDossiers');
+      div.innerHTML = '';
+      DOSSIERS.forEach(d => {
+        const action = d.id === "deconnexion"? "deconnexion()" : `ouvrirIcone('${d.id}', ${d.avecMdp})`;
+        div.innerHTML += `
+          <div class="dossier-card" onclick="${action}">
+            <div class="icon-emoji">${d.icon}</div>
+            <div class="icon-nom">${d.nom}</div>
+          </div>`;
+      });
+    }
+
+    function ouvrirIcone(dossierId, avecMdp) {
+      dossierActuel = dossierId;
+      if (!avecMdp) {
+        ouvrirDossierDirect();
+      } else {
+        const mdpMemorise = getMdpMemorise(dossierId);
+        if (mdpMemorise) {
+          verifierMdpEtOuvrir(mdpMemorise);
+        } else {
+          const config = DOSSIERS.find(d => d.id === dossierId);
+          document.getElementById('titreDossierModal').innerText = config.nom;
+          document.getElementById('modalDossier').classList.remove('hidden');
+          document.getElementById('mdpDossierInput').value = '';
+          document.getElementById('dossierError').innerText = '';
+          document.getElementById('memoriserMdp').checked = false;
+        }
+      }
+    }
+
+    function ouvrirDossier() {
+      const mdp = document.getElementById('mdpDossierInput').value;
+      setMdpMemorise(dossierActuel, mdp);
+      verifierMdpEtOuvrir(mdp);
+    }
+
+    function verifierMdpEtOuvrir(mdp) {
+      db.ref('dossiers/' + dossierActuel + '/mdp').once('value', snap => {
+        if (snap.val() === mdp) {
+          document.getElementById('modalDossier').classList.add('hidden');
+          ouvrirDossierDirect();
+        } else {
+          localStorage.removeItem('mdp_' + dossierActuel);
+          document.getElementById('dossierError').innerText = "Mot de passe incorrect";
+          document.getElementById('modalDossier').classList.remove('hidden');
+        }
+      });
+    }
+
+    function ouvrirDossierDirect() {
+      document.getElementById('vueIcones').classList.add('hidden');
+      document.getElementById('vueDossierOuvert').classList.remove('hidden');
+      const configDossier = DOSSIERS.find(d => d.id === dossierActuel);
+      document.getElementById('nomDossierOuvert').innerText = configDossier.nom;
+
+      document.getElementById('sectionAjout').classList.toggle('hidden',!configDossier.avecAjout);
+      document.getElementById('sectionListe').classList.toggle('hidden',!configDossier.avecAjout);
+      document.getElementById('champsPasteur').classList.toggle('hidden',!configDossier.estPasteur);
+      
+     // Gestion École vs Musique
+      if (configDossier.estEcole) {
+      document.getElementById('champsEcole').classList.remove('hidden');
+      document.getElementById('champsMusique').classList.add('hidden');
+    } else if (configDossier.estMusique) {
+      document.getElementById('champsMusique').classList.remove('hidden');
+      document.getElementById('champsEcole').classList.add('hidden');
+    } else {
+      document.getElementById('champsEcole').classList.add('hidden');
+      document.getElementById('champsMusique').classList.add('hidden');
+      document.getElementById('champsBapteme').classList.remove('hidden');
+    }
+
+      db.ref('dossiers/' + dossierActuel + '/rapport').on('value', snap => {
+        document.getElementById('rapportDossier').innerText = snap.val() || "Aucun rapport pour le moment.";
+      });
+
+      if (configDossier.avecAjout) {
+        db.ref('dossiers/' + dossierActuel + '/personnes').on('value', snap => {
+          const div = document.getElementById('listePersonnesDossier');
+          div.innerHTML = '';
+          snap.forEach(child => {
+            const p = child.val();
+            let details = `Né(e): ${p.dateNaissance || 'N/A'}`;
+
+            if (configDossier.estEcole) {
+              if (p.typePersonneEcole === 'Moniteur' || p.typePersonneEcole === 'Monitrice') {
+                details += ` | Baptême eau: ${p.baptemeEau || 'N/A'} (${p.anneeBaptemeEau || '?'}) | Saint-Esprit: ${p.baptemeEsprit || 'N/A'} (${p.anneeBaptemeEsprit || '?'})`;
+                details += `<br>Grade: ${p.grade || 'N/A'} | Exp Moniteur: ${p.anneesExperienceMoniteur || 'N/A'} ans`;
+              } else {
+                details += `<br>Type: ${p.typePersonneEcole || 'N/A'} | Parents: ${p.numeroParents || 'N/A'}`;
+              }
+            } else {
+              details += ` | Baptême eau: ${p.baptemeEau || 'N/A'} (${p.anneeBaptemeEau || '?'}) | Saint-Esprit: ${p.baptemeEsprit || 'N/A'} (${p.anneeBaptemeEsprit || '?'})`;
+            }
+
+            if (configDossier.estPasteur) {
+              details += `<br>Diplôme: ${p.diplome || 'N/A'} | Exp: ${p.experience || 'N/A'} ans | Baptiseur: ${p.nomBaptiseur || 'N/A'}`;
+            }
+
+            const photoSrc = p.photo || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Crect fill='%23e2e8f0' width='60' height='60' rx='30'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%2364748b' font-size='24'%3E👤%3C/text%3E%3C/svg%3E";
+            div.innerHTML += `<div class="personne-item"><img src="${photoSrc}" class="personne-photo"><div class="personne-info"><strong>${p.prenom} ${p.nom}</strong> - ${p.tel || 'N/A'}<div class="personne-details">${details}</div></div></div>`;
+          });
+        });
+      }
+    }
+
+    function ajouterPersonneDossier() {
+      const nom = document.getElementById('nomPersonne').value.trim();
+      const prenom = document.getElementById('prenomPersonne').value.trim();
+      if (!nom ||!prenom) return alert("Nom et prénom obligatoires");
+
+      const configDossier = DOSSIERS.find(d => d.id === dossierActuel);
+      let data = {
+        nom,
+        prenom,
+        tel: document.getElementById('telPersonne').value,
+        dateNaissance: document.getElementById('dateNaissance').value,
+        photo: photoBase64,
+        date: Date.now()
+      };
+
+      if (configDossier.estEcole) {
+        data.typePersonneEcole = document.getElementById('typePersonneEcole').value;
+        if (data.typePersonneEcole === 'Moniteur' || data.typePersonneEcole === 'Monitrice') {
+          data.baptemeEau = document.getElementById('baptemeEau').value;
+          data.anneeBaptemeEau = document.getElementById('anneeBaptemeEau').value;
+          data.baptemeEsprit = document.getElementById('baptemeEsprit').value;
+          data.anneeBaptemeEsprit = document.getElementById('anneeBaptemeEsprit').value;
+          data.grade = document.getElementById('grade').value;
+          data.anneesExperienceMoniteur = document.getElementById('anneesExperienceMoniteur').value;
+        } else {
+          data.numeroParents = document.getElementById('numeroParents').value;
+        }
+      } else {
+        data.baptemeEau = document.getElementById('baptemeEau').value;
+        data.anneeBaptemeEau = document.getElementById('anneeBaptemeEau').value;
+        data.baptemeEsprit = document.getElementById('baptemeEsprit').value;
+        data.anneeBaptemeEsprit = document.getElementById('anneeBaptemeEsprit').value;
+      }
+
+      if (configDossier.estPasteur) {
+        data.diplome = document.getElementById('diplome').value;
+        data.experience = document.getElementById('experience').value;
+        data.nomBaptiseur = document.getElementById('nomBaptiseur').value;
+      }
+
+      db.ref('dossiers/' + dossierActuel + '/personnes').push(data);
+
+      document.getElementById('nomPersonne').value = '';
+      document.getElementById('prenomPersonne').value = '';
+      document.getElementById('telPersonne').value = '';
+      document.getElementById('dateNaissance').value = '';
+      document.getElementById('baptemeEau').value = '';
+      document.getElementById('anneeBaptemeEau').value = '';
+      document.getElementById('baptemeEsprit').value = '';
+      document.getElementById('anneeBaptemeEsprit').value = '';
+      document.getElementById('typePersonneEcole').value = '';
+      document.getElementById('grade').value = '';
+      document.getElementById('numeroParents').value = '';
+      document.getElementById('anneesExperienceMoniteur').value = '';
+      document.getElementById('diplome').value = '';
+      document.getElementById('experience').value = '';
+      document.getElementById('nomBaptiseur').value = '';
+      document.getElementById('photoInput').value = '';
+      document.getElementById('photoPreview').src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Crect fill='%23e2e8f0' width='50' height='50' rx='25'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%2364748b' font-size='20'%3E📷%3C/text%3E%3C/svg%3E";
+      photoBase64 = null;
+      toggleChampsEcole();
+    }
+
+    function retourIcones() {
+      db.ref('dossiers/' + dossierActuel + '/rapport').off();
+      db.ref('dossiers/' + dossierActuel + '/personnes').off();
+      document.getElementById('vueDossierOuvert').classList.add('hidden');
+      document.getElementById('vueIcones').classList.remove('hidden');
+      dossierActuel = null;
+    }
+
+    function sauverRapport() {
+      const texte = document.getElementById('nouveauRapport').value;
+      db.ref('dossiers/' + dossierActuel + '/rapport').set(texte);
+      document.getElementById('nouveauRapport').value = '';
+      alert("Rapport synchronisé!");
+    }
+
+    function changerMdpDossier() {
+      const codeAdmin = prompt("Entrez le CODE ADMIN (Pasteur principal) pour modifier le mot de passe :");
+      if (codeAdmin === CODE_ADMIN) {
+        const nouveau = prompt("Nouveau mot de passe pour ce dossier :");
+        if (nouveau && nouveau.length >= 4) {
+          db.ref('dossiers/' + dossierActuel + '/mdp').set(nouveau);
+          alert("Mot de passe modifié!");
+        }
+      } else {
+        alert("Accès refusé. Seul l'administrateur Pasteur peut modifier les mots de passe.");
+      }
+    }
+
+    function fermerModal() {
+      document.getElementById('modalDossier').classList.add('hidden');
+      dossierActuel = null;
+    }
+
+    function deconnexion() { location.reload(); }
+  </script>
+</body>
+</html>
