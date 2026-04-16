@@ -1,21 +1,24 @@
 ﻿{
-  "name": "Assemblées de Dieu - Gestion Église",
+  "name": "AD Église",
   "short_name": "AD Église",
+  "description": "Gestion Église Assemblées de Dieu",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#FF6B35",
-  "theme_color": "#1E3A8A",
+  "background_color": "#ffffff",
+  "theme_color": "#1e40af",
   "orientation": "portrait",
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "sizes": "512x512", 
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
